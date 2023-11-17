@@ -11,7 +11,9 @@ const offerRoutes = require("./routes/offer");
 
 // Connection à la base de donnée
 mongoose
-  .connect(process.env.ATLAS_URI)
+  .connect(
+    "mongodb+srv://FlorianMichel:N88mYF3Vp5yBVI7s@vinted.xaxoauh.mongodb.net/Vinted"
+  )
   .then(() => {
     console.log("🟢 Database successfully connected");
   })
