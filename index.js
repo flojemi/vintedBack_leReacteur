@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // Import des packages
-const cors = require("cors");
+// const cors = require("cors");
 const mongoose = require("mongoose");
 const express = require("express");
 
@@ -13,15 +13,15 @@ const offerRoutes = require("./routes/offer");
 mongoose
   .connect(process.env.ATLAS_URI)
   .then(() => {
-    console.log("✅ Database successfully connected");
+    console.log("🟢 Database successfully connected");
   })
   .catch((error) => {
-    console.log("🛑", error.message);
+    console.log("🔴", error.message);
   });
 
 // Création du serveur
 const app = express();
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 // Gestion des routes
@@ -38,5 +38,5 @@ app.all("*", (req, res) => {
 // Démarrage du serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Listening on port ${PORT}`);
+  console.log(`🟢 Listening on port ${PORT}`);
 });
