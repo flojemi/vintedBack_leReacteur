@@ -8,9 +8,9 @@ const encBase64 = require("crypto-js/enc-base64");
 const cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-  cloud_name: "dnvysorig",
-  api_key: "916623728755781",
-  api_secret: "KX18DgtPBwTIL23b2lohkfrGesI",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const router = express.Router();
