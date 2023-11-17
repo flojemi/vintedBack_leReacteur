@@ -11,7 +11,7 @@ const offerRoutes = require("./routes/offer");
 
 // Connection à la base de donnée
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.ATLAS_URI)
   .then(() => {
     console.log("✅ Database successfully connected");
   })
