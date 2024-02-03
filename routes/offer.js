@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 
 const Offer = require("../models/Offer");
+
 const isAuthenticated = require("../utils/middleware");
 const fileUpload = require("express-fileupload");
 const encBase64 = require("crypto-js/enc-base64");
@@ -70,7 +71,6 @@ router.get("/offers", async (req, res) => {
     if (req.query.page) {
       // Vérifie qu'il y a assez de résultats à afficher
       const offersNumber = await Offer.countDocuments();
-      console.log(skip, offersNumber);
       if (skip >= offersNumber) throw new Error("This page does not exist");
     }
 
@@ -80,7 +80,9 @@ router.get("/offers", async (req, res) => {
     // ===================================== \\
     // ========= 6) Execute query ========== \\
     // ===================================== \\
-    const result = await query;
+    result = await query.populate("owner");
+
+    console.log(result);
 
     res.status(200).json({
       success: true,
@@ -102,11 +104,18 @@ router.post(
   async (req, res) => {
     // Récupération des éléments transmis avec la requête
     const infos = req.body;
-    const files = req.files.picture;
 
-    // TODO : Attention lorsqu'une seule image envoyée, ce n'est pas un array et files.map pose un problème = à corriger
+    // Lorsqu'une seule image envoyée, ce n'est pas un array et files.map pose un problème d'où la condition
+    let files;
+    if (typeof req.files.picture === "object") {
+      const { picture } = req.files;
+      files = [picture];
+    } else {
+      files = req.files.picture;
+    }
 
     try {
+      console.log("files ==>", files);
       // Transformation des buffer et constructions des promesses
       const uploadPromises = files.map((file) => {
         const base64buffer = `data:${file.mimetype};base64,${file.data.toString(

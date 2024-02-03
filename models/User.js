@@ -22,9 +22,17 @@ const User = mongoose.model("User", {
     type: Number,
     default: 0,
   },
-  token: String,
-  hash: String,
-  salt: String,
+  token: {
+    type: String,
+  },
+  hash: {
+    type: String,
+    // select: false,
+  },
+  salt: {
+    type: String,
+    // select: false
+  },
 });
 
 module.exports = User;

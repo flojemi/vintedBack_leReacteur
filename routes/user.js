@@ -31,16 +31,11 @@ router.post("/user/signup", async (req, res) => {
   }
 
   // Vérification de l'intégrité du mot de passe
-  if (!password || password.length < 15) {
+  if (!password || password.length < 10) {
     return res.status(400).json({
       success: false,
-      message: "You must provide a valid password (15 chars at least)",
+      message: "You must provide a valid password (10 chars at least)",
     });
-  }
-
-  // Vérification de l'intégrité de newsletter
-  if (newsletter !== true) {
-    newsletter = false;
   }
 
   try {
@@ -70,7 +65,6 @@ router.post("/user/signup", async (req, res) => {
 
     // Sauvegarde dans la bdd
     const createdUser = await newUser.save();
-    console.log(createdUser);
 
     // Réponse faite au client
     res.status(201).json({
@@ -125,35 +119,35 @@ router.post("/user/login", async (req, res) => {
       });
     }
 
-    // Vérifie l'état du compte pour s'assurer qu'il n'est pas bloqué
-    const fiveMinutesPast = Date.now() - 300000;
-    if (user.lockedTime > fiveMinutesPast) {
-      return res.status(400).json({
-        success: false,
-        message: "Account is temporarily locked due to login attempts",
-      });
-    }
+    // // Vérifie l'état du compte pour s'assurer qu'il n'est pas bloqué
+    // const fiveMinutesPast = Date.now() - 300000;
+    // if (user.lockedTime > fiveMinutesPast) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Account is temporarily locked due to login attempts",
+    //   });
+    // }
 
     // Vérification du mot de passe, si les hash ne sont pas en phases
     if (!isValidHash(password, user.salt, user.hash)) {
-      // Nombre de tentative +1
-      user.loginTry += 1;
-      await user.save();
+      // // Nombre de tentative +1
+      // user.loginTry += 1;
+      // await user.save();
 
-      // Si 3 tentatives infructueuses
-      if (user.loginTry >= 3) {
-        // Blocage du compte
-        user.lockedTime = Date.now();
-        await user.save();
+      // // Si 3 tentatives infructueuses
+      // if (user.loginTry >= 3) {
+      //   // Blocage du compte
+      //   user.lockedTime = Date.now();
+      //   await user.save();
 
-        return res.status(400).json({
-          success: false,
-          message:
-            "Too many login attempts, account is temporarily inaccessible",
-        });
-      }
+      //   return res.status(400).json({
+      //     success: false,
+      //     message:
+      //       "Too many login attempts, account is temporarily inaccessible",
+      //   });
+      // }
 
-      // Sinon il s'agit d'un mot de passe erroné
+      // Mot de passe erroné
       return res.status(400).json({
         success: false,
         message: "Logs doesn't match",
@@ -177,6 +171,31 @@ router.post("/user/login", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+/* ====================================================== */
+/* ============== Get user info using token ============= */
+/* ====================================================== */
+
+router.get("/user/:token", async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const user = await User.find({ token });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        userId: user[0]._id,
+        username: user[0].account.username,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
       success: false,
       message: error.message,
     });
