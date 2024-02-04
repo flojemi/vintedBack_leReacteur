@@ -7,6 +7,7 @@ const cors = require("cors");
 
 const userRoutes = require("./routes/user");
 const offerRoutes = require("./routes/offer");
+const payRoutes = require("./routes/pay");
 
 // Connection à la base de donnée
 mongoose
@@ -27,6 +28,7 @@ app.use(express.json());
 // Gestion des routes
 app.use(userRoutes);
 app.use(offerRoutes);
+app.use(payRoutes);
 
 app.all("*", (req, res) => {
   res.status(404).json({

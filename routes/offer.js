@@ -36,7 +36,8 @@ router.get("/offers", async (req, res) => {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     // Monte la requête en transformant la string en objet (sans l'exécuter pour pouvoir chaîner les méthodes)
-    let query = Offer.find(JSON.parse(queryStr));
+    console.log(queryStr);
+    let query = Offer.find({ ...JSON.parse(queryStr), sold: false });
 
     // ===================================== \\
     // ============= 2) Sorting ============ \\
@@ -81,8 +82,6 @@ router.get("/offers", async (req, res) => {
     // ========= 6) Execute query ========== \\
     // ===================================== \\
     result = await query.populate("owner");
-
-    console.log(result);
 
     res.status(200).json({
       success: true,

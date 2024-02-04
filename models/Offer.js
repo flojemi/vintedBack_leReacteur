@@ -22,6 +22,15 @@ const Offer = mongoose.model("Offer", {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  sold: {
+    type: Boolean,
+    default: false,
+    select: false,
+  },
+  soldTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 module.exports = Offer;
