@@ -1,4 +1,5 @@
 const stripe = require("stripe")(process.env.STRIPE_API_SECRET);
+
 const express = require("express");
 const router = express.Router();
 
@@ -12,14 +13,13 @@ const User = require("../models/User");
 router.post("/pay", async (req, res) => {
   const { stripeToken, userToken, offerData } = req.body;
 
-  console.log(offerData);
-
   try {
     // Compare les données de l'offre transmise à celle présente en bdd
     const confirmOfferData = await Offer.findOne({ _id: offerData._id });
 
     // Si le prix correspond, on passe à la suite
     if (confirmOfferData.product_price !== offerData.product_price) {
+      // Si un tel cas devait arriver, bannir l'utilisateur pour tentative de vol
       return res.status(400).json({
         success: false,
         message: "Purchase can't be done",
