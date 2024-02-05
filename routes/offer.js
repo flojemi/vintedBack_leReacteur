@@ -36,7 +36,6 @@ router.get("/offers", async (req, res) => {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     // Monte la requête en transformant la string en objet (sans l'exécuter pour pouvoir chaîner les méthodes)
-    console.log(queryStr);
     let query = Offer.find({ ...JSON.parse(queryStr), sold: false });
 
     // ===================================== \\
